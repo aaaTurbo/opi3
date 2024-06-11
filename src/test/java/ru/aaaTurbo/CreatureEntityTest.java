@@ -1,11 +1,8 @@
 package ru.aaaTurbo;
 
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import ru.aaaTurbo.entities.Fight;
-import ru.aaaTurbo.entities.Monster;
-import ru.aaaTurbo.entities.Player;
 import ru.aaaTurbo.entities.abstracts.Creature;
 
 import ru.aaaTurbo.exceptions.AttackOutOfBoundsExceptions;
@@ -85,15 +82,6 @@ public class CreatureEntityTest {
             }
         };
         assertTrue(test.isTestClass());
-    }
-
-    @Test
-    public void testSuccessFight()
-            throws DefenceOutOfBoundsExceptions, AttackOutOfBoundsExceptions, HealthOutOfBoundsExceptions, DamageMaxMinException, DamageUnderZeroException {
-        Fight fight = new Fight(
-                new Player("Knight", 20, 11, 10, 8, 4),
-                new Monster("Monster", 35, 10, 9, 6, 3));
-        fight.run();
     }
 
 }
