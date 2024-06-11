@@ -1,6 +1,6 @@
 package ru.aaaTurbo;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ru.aaaTurbo.entities.Fight;
 import ru.aaaTurbo.entities.Monster;
