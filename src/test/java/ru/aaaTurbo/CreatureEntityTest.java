@@ -1,6 +1,7 @@
 package ru.aaaTurbo;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import ru.aaaTurbo.entities.abstracts.Creature;
@@ -15,7 +16,7 @@ public class CreatureEntityTest {
 
     @Test
     public void testAttackOutOfBoundsExceptionU30() {
-        AttackOutOfBoundsExceptions thrown = assertThrows(
+        assertThrows(
                 AttackOutOfBoundsExceptions.class,
                 () -> {
                     new Creature("test", 10, 31, 10, 10, 10) {
@@ -29,7 +30,7 @@ public class CreatureEntityTest {
 
     @Test()
     public void testAttackOutOfBoundsExceptionU1() {
-        AttackOutOfBoundsExceptions thrown = assertThrows(
+        assertThrows(
                 AttackOutOfBoundsExceptions.class,
                 () -> {
                     new Creature("test", 10, 0, 10, 10, 10) {
@@ -43,7 +44,7 @@ public class CreatureEntityTest {
 
     @Test
     public void testDamageUnderZeroException() {
-        DamageUnderZeroException thrown = assertThrows(
+        assertThrows(
                 DamageUnderZeroException.class,
                 () -> {
                     new Creature("test", 10, 10, 10, 10, -1) {
@@ -57,7 +58,7 @@ public class CreatureEntityTest {
 
     @Test()
     public void testDamageMaxMinException() {
-        DamageMaxMinException thrown = assertThrows(
+        assertThrows(
                 DamageMaxMinException.class,
                 () -> {
                     new Creature("test", 10, 10, 10, 9, 10) {
@@ -71,7 +72,7 @@ public class CreatureEntityTest {
 
     @Test()
     public void testDefenceOutOfBoundsExceptionsU30() {
-        DefenceOutOfBoundsExceptions thrown = assertThrows(
+        assertThrows(
                 DefenceOutOfBoundsExceptions.class,
                 () -> {
                     new Creature("test", 10, 10, 31, 10, 10) {
@@ -86,7 +87,7 @@ public class CreatureEntityTest {
 
     @Test
     public void testHealthOutOfBoundsExceptions() {
-        HealthOutOfBoundsExceptions thrown = assertThrows(
+        assertThrows(
                 HealthOutOfBoundsExceptions.class,
                 () -> {
                     new Creature("test", 0, 10, 10, 10, 10) {
