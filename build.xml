@@ -110,7 +110,7 @@
         </exec>
         <exec if:set="vcs.git.should_commit" executable="git">
             <arg value="commit" />
-            <arg value="-m 'Feat from mzfk ant'" />
+            <arg value="-m Feat from mzfk ant" />
         </exec>
     </target>
 
