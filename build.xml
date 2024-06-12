@@ -69,4 +69,78 @@
         <echo message="Test completed"/>
     </target>
 
+    <target name="native2ascii">
+        <native2ascii encoding="UTF-8" src="src/main/resources" includes="*.properties" dest="${dist.dir}" />
+    </target>
+
+    <target name="scp" depends="build">
+        <sshexec
+                host="${host}"
+                port="${port}"
+                username="${remote_user}"
+                password="${remote_password}"
+                command="mkdir -p ${remote_dir_path}"
+                trust="true" />
+        <scp
+                file="${dist.jar}"
+                todir="${remote_user}@${host}:${remote_dir_path}"
+                password="${remote_password}"
+                port="${port}"/>
+    </target>
+
+    <target name="diff">
+        <exec executable="git" outputproperty="vcs.git.diff_output">
+            <arg value="diff" />
+            <arg value="--name-only" />
+        </exec>
+        <condition property="vcs.git.should_commit" value="true">
+            <resourcecount count="0">
+                <intersect>
+                    <filelist id="vcs.git.files_to_commit" files="${vcs.git.diff_output}"/>
+                    <filelist files="${vcs.git.diff_files}" />
+                </intersect>
+            </resourcecount>
+        </condition>
+        <echoproperties prefix="vcs" />
+        <!-- if set does not contain specified files, do commit -->
+        <pathconvert property="vcs.git.files_to_commit_separated" refid="vcs.git.files_to_commit" pathsep=" " />
+        <exec if:set="vcs.git.should_commit" executable="git">
+            <arg value="add"/>
+            <arg line="${vcs.git.files_to_commit_separated}" />
+        </exec>
+        <exec if:set="vcs.git.should_commit" executable="git">
+            <arg value="commit" />
+            <arg value="-m 'Feat from mzfk ant'" />
+        </exec>
+    </target>
+
+    <target name="team">
+        <exec executable="svn">
+            <arg line="update"/>
+        </exec>
+
+        <exec executable="svn" outputproperty="svn_revision">
+            <arg line="info --show-item revision"/>
+        </exec>
+
+        <for list="1,2,3,4" param="offset">
+            <sequential>
+                <antcall target="clean"/>
+                <antcall target="build"/>
+                <move file="${dist.jar}" todir="${team.dir}"/>
+                <move file="${team.dir}/${dist.jar.name}" tofile="${team.dir}/@{offset}.jar"/>
+
+                <math result="svn_revision">
+                    <op datatype="int" op="-">
+                        <num value="${svn_revision}"/>
+                        <num value="1"/>
+                    </op>
+                </math>
+            </sequential>
+        </for>
+
+        <zip destfile="${dist.dir}/jars.zip"
+             basedir="${team.dir}"/>
+    </target>
+
 </project>
