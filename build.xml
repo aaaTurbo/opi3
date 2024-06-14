@@ -7,7 +7,7 @@
 
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
-            <pathelement location="lib/ant-contrib-1.0b3.jar" />
+            <pathelement location="lib/ant-contrib-1.0b3.jar"/>
         </classpath>
     </taskdef>
 
@@ -19,6 +19,7 @@
     <target name="init">
         <mkdir dir="${target.classes}"/>
         <mkdir dir="${target.tests}"/>
+        <echo file="${target}/warnings.txt"/>
     </target>
 
     <target name="compile" depends="init">
@@ -62,7 +63,7 @@
         <junitlauncher printsummary="on" haltonfailure="yes">
             <classpath refid="classpath.testSource"/>
             <testclasses outputdir="${test.result.dir}">
-                <fileset dir="${target.tests}" includes="**/*.class" />
+                <fileset dir="${target.tests}" includes="**/*.class"/>
                 <listener type="legacy-xml" sendSysOut="true" sendSysErr="true"/>
             </testclasses>
         </junitlauncher>
@@ -70,7 +71,7 @@
     </target>
 
     <target name="native2ascii">
-        <native2ascii encoding="UTF-8" src="src/main/resources" includes="*.properties" dest="${dist.dir}" />
+        <native2ascii encoding="UTF-8" src="src/main/resources" includes="*.properties" dest="${dist.dir}"/>
     </target>
 
     <target name="scp" depends="build">
@@ -80,7 +81,7 @@
                 username="${remote_user}"
                 password="${remote_password}"
                 command="mkdir -p ${remote_dir_path}"
-                trust="true" />
+                trust="true"/>
         <scp
                 file="${dist.jar}"
                 todir="${remote_user}@${host}:${remote_dir_path}"
@@ -90,27 +91,27 @@
 
     <target name="diff">
         <exec executable="git" outputproperty="vcs.git.diff_output">
-            <arg value="diff" />
-            <arg value="--name-only" />
+            <arg value="diff"/>
+            <arg value="--name-only"/>
         </exec>
         <condition property="vcs.git.should_commit" value="true">
             <resourcecount count="0">
                 <intersect>
                     <filelist id="vcs.git.files_to_commit" files="${vcs.git.diff_output}"/>
-                    <filelist files="${vcs.git.diff_files}" />
+                    <filelist files="${vcs.git.diff_files}"/>
                 </intersect>
             </resourcecount>
         </condition>
-        <echoproperties prefix="vcs" />
+        <echoproperties prefix="vcs"/>
         <!-- if set does not contain specified files, do commit -->
-        <pathconvert property="vcs.git.files_to_commit_separated" refid="vcs.git.files_to_commit" pathsep=" " />
+        <pathconvert property="vcs.git.files_to_commit_separated" refid="vcs.git.files_to_commit" pathsep=" "/>
         <exec if:set="vcs.git.should_commit" executable="git">
             <arg value="add"/>
-            <arg line="${vcs.git.files_to_commit_separated}" />
+            <arg line="${vcs.git.files_to_commit_separated}"/>
         </exec>
         <exec if:set="vcs.git.should_commit" executable="git">
-            <arg value="commit" />
-            <arg value="-m Feat from mzfk ant" />
+            <arg value="commit"/>
+            <arg value="-m Feat from mzfk ant"/>
         </exec>
     </target>
 
@@ -143,4 +144,20 @@
              basedir="${team.dir}"/>
     </target>
 
+    <target name="compileWOW">
+        <antcall target="clean"/>
+        <antcall target="init"/>
+        <record name="warnings.txt" action="start" loglevel="warn"/>
+        <javac destdir="${target.classes}"
+               srcdir="${main.source}"
+
+        >
+        </javac>
+        <record name="warnings.txt" action="stop"/>
+        <condition property="warnings.is.empty">
+            <length file="warnings.txt" when="equal" length="0"/>
+        </condition>
+        <antcall if:set="warnings.is.empty" target="build"/>
+        <fail message="There are warnings while compile!"/>
+    </target>
 </project>
